@@ -14,27 +14,25 @@
 <div id="stage">
   <canvas id="game" aria-label="游戏画面"></canvas>
 
-  <!-- 顶部状态栏 -->
+  <!-- 顶部状态 -->
   <header class="hud">
-    <div class="hud-item">
-      <span class="hud-label">分数</span>
-      <strong id="score">0</strong>
-    </div>
-    <div class="hud-item">
-      <span class="hud-label">体型</span>
-      <strong id="size">16</strong>
-    </div>
-    <div class="hud-item">
-      <span class="hud-label">最佳</span>
-      <strong id="best">0</strong>
-    </div>
+    <div class="hud-item"><span class="hud-label">分数</span><strong id="score">0</strong></div>
+    <div class="hud-item"><span class="hud-label">体型</span><strong id="size">16</strong></div>
+    <div class="hud-item"><span class="hud-label">最佳</span><strong id="best">0</strong></div>
     <div class="hud-item lives" id="lives" aria-label="剩余生命">
       <span class="heart">♥</span><span class="heart">♥</span><span class="heart">♥</span>
     </div>
-    <button id="mute" class="icon-btn" title="声音开关" aria-label="声音开关">🔊</button>
   </header>
 
-  <!-- 遮罩:开始 / 结束 / 暂停 -->
+  <!-- 游戏内控制条 -->
+  <div class="controls" id="controls">
+    <button id="btn-pause" class="icon-btn" title="暂停 (P)" aria-label="暂停">⏸</button>
+    <button id="btn-restart" class="icon-btn" title="重新开始 (R)" aria-label="重新开始">↻</button>
+    <button id="btn-quit" class="icon-btn danger" title="退出游戏" aria-label="退出游戏">✕</button>
+    <button id="mute" class="icon-btn" title="声音开关" aria-label="声音开关">🔊</button>
+  </div>
+
+  <!-- 遮罩 -->
   <div class="overlay" id="overlay">
     <div class="panel">
       <p class="kicker" id="ov-kicker">FISH EATS FISH</p>
@@ -44,8 +42,11 @@
         吃掉<b>比你小</b>的鱼会长大,碰到<b>比你大</b>的鱼会掉命。
       </p>
       <div class="meta" id="ov-meta"></div>
-      <button class="play" id="ov-btn">开始</button>
-      <p class="hint">键盘也可:方向键 / WASD&nbsp;&nbsp;·&nbsp;&nbsp;暂停 P</p>
+      <div class="actions">
+        <button class="play" id="ov-btn">开始游戏</button>
+        <button class="ghost" id="ov-exit">退出</button>
+      </div>
+      <p class="hint">键盘也可:方向键 / WASD&nbsp;&nbsp;·&nbsp;&nbsp;暂停 P&nbsp;&nbsp;·&nbsp;&nbsp;重开 R</p>
     </div>
   </div>
 </div>
