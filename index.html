@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>大鱼吃小鱼 · Fish Eats Fish</title>
+<meta name="description" content="一个用 Canvas 手写的极简游戏:吃掉比你小的鱼,躲开比你大的鱼。" />
+<meta name="theme-color" content="#0b2233" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230b2233'/%3E%3Cellipse cx='30' cy='32' rx='15' ry='10' fill='%23ff6fae'/%3E%3Cpath d='M45 32l12-8v16z' fill='%23ff6fae'/%3E%3Ccircle cx='25' cy='29' r='2.4' fill='%230b2233'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="game" aria-label="游戏画面"></canvas>
+
+  <!-- 顶部状态栏 -->
+  <header class="hud">
+    <div class="hud-item">
+      <span class="hud-label">分数</span>
+      <strong id="score">0</strong>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">体型</span>
+      <strong id="size">16</strong>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">最佳</span>
+      <strong id="best">0</strong>
+    </div>
+    <div class="hud-item lives" id="lives" aria-label="剩余生命">
+      <span class="heart">♥</span><span class="heart">♥</span><span class="heart">♥</span>
+    </div>
+    <button id="mute" class="icon-btn" title="声音开关" aria-label="声音开关">🔊</button>
+  </header>
+
+  <!-- 遮罩:开始 / 结束 / 暂停 -->
+  <div class="overlay" id="overlay">
+    <div class="panel">
+      <p class="kicker" id="ov-kicker">FISH EATS FISH</p>
+      <h1 id="ov-title">大鱼吃小鱼</h1>
+      <p class="desc" id="ov-text">
+        移动鼠标(或手指)控制鱼。<br />
+        吃掉<b>比你小</b>的鱼会长大,碰到<b>比你大</b>的鱼会掉命。
+      </p>
+      <div class="meta" id="ov-meta"></div>
+      <button class="play" id="ov-btn">开始</button>
+      <p class="hint">键盘也可:方向键 / WASD&nbsp;&nbsp;·&nbsp;&nbsp;暂停 P</p>
+    </div>
+  </div>
+</div>
+
+<script src="./game.js"></script>
+</body>
+</html>
