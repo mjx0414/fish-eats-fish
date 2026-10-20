@@ -202,3 +202,19 @@ git reset --hard origin/main     # 以远端为准；本地历史被丢弃（内
 ## 八、分支状态
 
 本次没有特性分支可合并（仓库只有 `main`），也无可用的 git 传输通道，因此"合并回基分支 / 建 PR"两条路径都不适用。发布通过 API 完成，本地 `v1.0.0` 标签仍指向本地提交 `11f9878`。
+
+## 九、GitHub Release
+
+**标签（Tag）不等于发布（Release）。** `git tag` 只创建一个指向某次提交的引用，仓库侧边栏的 "Releases" 计数统计的是 **Release 对象**，与标签数量无关。首轮发布只打了附注标签 `v1.0.0`，因此侧边栏 Releases 后面没有数字——这不是失败，是少做了一步。
+
+| 项 | 值 |
+| --- | --- |
+| Release | `Fish Eats Fish v1.0.0`（id `418220489`） |
+| 页面 | https://github.com/mjx0414/fish-eats-fish/releases/tag/v1.0.0 |
+| 关联标签 | `v1.0.0` → `2155ee2` |
+| 状态 | 正式（非草稿、非预发布），标记为 Latest |
+| 附件 | `fish-eats-fish-v1.0.0.zip`（20,916 B）、`SHA256SUMS.txt`（477 B） |
+
+Release 说明正文由 `CHANGELOG.md` 的 `[1.0.0]` 段落自动提取，附上在线试玩、测试报告、交付说明三个入口，避免同一份变更写两遍、两处走样。附件直接取 `release/` 目录下已校验过哈希的构建产物，不重新打包。
+
+校验方式：`GET /repos/mjx0414/fish-eats-fish/releases` 返回长度为 1，`.../releases/latest` 返回 `v1.0.0` 且 `assets` 为 2 项。
