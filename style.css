@@ -1,3 +1,7 @@
+/* =========================================================
+   大鱼吃小鱼 · style.css（v1.1）
+   对应 PRD：B1-4 / B1-5(布局) / E-10 / N10 / RK-05
+   ========================================================= */
 :root{
   --deep:#0b2233;
   --ink:#eaf4f8;
@@ -6,7 +10,6 @@
   --pink-2:#ff4d8d;
   --danger:#ff6b6b;
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
@@ -23,31 +26,41 @@ body{
 #stage{position:fixed;inset:0}
 #game{display:block;width:100%;height:100%;touch-action:none;cursor:none}
 
-/* ---------- HUD ---------- */
+/* ---------- HUD（pointer-events:none，不拦截操作） ---------- */
 .hud{
   position:absolute;top:0;left:0;right:0;
   display:flex;align-items:center;gap:24px;
   padding:16px 22px;pointer-events:none;
+  flex-wrap:nowrap;
 }
-.hud-item{display:flex;align-items:baseline;gap:7px}
-.hud-label{color:var(--muted);font-size:12px;letter-spacing:1px}
+.hud-item{display:flex;align-items:baseline;gap:7px;flex:0 0 auto}
+.hud-label{color:#b0cddb;font-size:12px;letter-spacing:1px;white-space:nowrap}  /* N10：最浅海域上 5.03:1 */
 .hud-item strong{
   font-size:20px;font-weight:800;letter-spacing:.4px;
   font-variant-numeric:tabular-nums;color:var(--ink);
+  white-space:nowrap;
 }
 .lives{margin-left:6px;gap:6px;align-items:center}
 .heart{color:var(--pink);font-size:15px;line-height:1;transition:opacity .25s,transform .25s}
+/* B5-2：消失的心保留占位，HUD 宽度不变 */
 .heart.off{opacity:.16;transform:scale(.75)}
 
 /* ---------- 控制条 ---------- */
 .controls{
-  position:absolute;top:14px;right:18px;
+  position:absolute;top:14px;right:70px;   /* 右侧留出静音键的位置 */
   display:flex;gap:8px;
-  opacity:0;transform:translateY(-6px);
+  opacity:0;visibility:hidden;transform:translateY(-6px);
   pointer-events:none;
-  transition:opacity .25s ease,transform .25s ease;
+  transition:opacity .25s ease,transform .25s ease,visibility .25s;
 }
-body.playing .controls{opacity:1;transform:none;pointer-events:auto}
+/* visibility 而非只有 opacity：隐藏时必须离开 Tab 序列（N10 键盘走查） */
+body.playing .controls,
+body.paused .controls{opacity:1;visibility:visible;transform:none;pointer-events:auto}
+/* 6.3：PAUSED 下 ↻ 必须可达，所以暂停时控制条要盖在遮罩之上 */
+body.paused .controls{z-index:7}
+
+/* 声音开关：常驻可点，盖在遮罩之上，任何状态都能用（AC6-7） */
+.sound{position:absolute;top:14px;right:18px;z-index:8}
 
 .icon-btn{
   width:40px;height:40px;border-radius:12px;
@@ -62,6 +75,7 @@ body.playing .controls{opacity:1;transform:none;pointer-events:auto}
 .icon-btn:active{transform:translateY(0)}
 .icon-btn.danger:hover{border-color:rgba(255,107,107,.65);color:var(--danger)}
 .icon-btn.off{opacity:.4}
+.icon-btn:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
 
 /* ---------- 遮罩 ---------- */
 .overlay{
@@ -72,6 +86,12 @@ body.playing .controls{opacity:1;transform:none;pointer-events:auto}
   -webkit-backdrop-filter:blur(7px);
   transition:opacity .3s ease, visibility .3s;
   padding:24px;
+  overflow:auto;              /* 极矮视口（横屏手机）下面板可滚动，提示行不被裁掉 */
+}
+/* RK-05：不支持 backdrop-filter 时退回纯色，避免低端机卡顿 */
+@supports not ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))){
+  .overlay{background:rgba(6,24,36,.93)}
+  .icon-btn{background:rgba(9,28,42,.9)}
 }
 .overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
 
@@ -84,7 +104,7 @@ body.playing .controls{opacity:1;transform:none;pointer-events:auto}
   background:linear-gradient(160deg, rgba(24,64,89,.9), rgba(8,24,36,.94));
   box-shadow:0 30px 90px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05);
 }
-.kicker{font-size:11px;letter-spacing:4px;color:var(--pink);font-weight:700;margin-bottom:14px}
+.kicker{font-size:11px;letter-spacing:4px;color:#ff8fc0;font-weight:700;margin-bottom:14px}  /* N10：原 #ff6fae 仅 4.25:1 */
 .panel h1{font-size:clamp(34px,6vw,54px);letter-spacing:-1.8px;line-height:1.05;margin-bottom:16px}
 .desc{color:var(--muted);font-size:15px;line-height:1.85}
 .desc b{color:var(--ink);font-weight:700}
@@ -111,15 +131,50 @@ body.playing .controls{opacity:1;transform:none;pointer-events:auto}
 }
 .ghost:hover{border-color:rgba(234,244,248,.45);color:var(--ink);transform:translateY(-2px)}
 .ghost[hidden]{display:none}
+.play:focus-visible,.ghost:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 
-.hint{margin-top:18px;font-size:12px;color:rgba(143,179,196,.7);letter-spacing:.3px}
+/* E-10：提示行允许折行且整体居中；极窄屏隐藏键盘提示（触屏本就用不上） */
+.hint{
+  margin-top:18px;font-size:12px;color:var(--muted);
+  letter-spacing:.3px;line-height:1.7;text-align:center;text-wrap:balance;
+}
 
+/* E-9：页脚版本号 */
+.build{
+  position:absolute;left:0;right:0;bottom:6px;
+  text-align:center;font-size:11px;letter-spacing:1px;
+  color:rgba(143,179,196,.72);pointer-events:none;   /* N10：原 .38 仅 2.21:1 */
+  font-variant-numeric:tabular-nums;
+}
+
+/* ---------- 响应式 ---------- */
 @media (max-width:560px){
   .hud{gap:14px;padding:12px 14px}
   .hud-item strong{font-size:17px}
+  .hud-label{font-size:11px}
   .controls{top:auto;bottom:16px;right:50%;transform:translate(50%,6px)}
-  body.playing .controls{transform:translate(50%,0)}
+  body.playing .controls,
+  body.paused .controls{transform:translate(50%,0)}
+  .sound{top:auto;bottom:16px;right:14px}
   .panel{padding:30px 20px 24px}
   .play{padding:13px 30px}
   .ghost{padding:13px 22px}
+}
+
+/* B1-4：320×480 极窄视口 —— HUD 四要素不得换行 / 重叠 */
+@media (max-width:400px){
+  .hud{gap:10px;padding:10px 10px}
+  .hud-item{gap:4px}
+  .hud-item strong{font-size:15px}
+  .hud-label{font-size:10px;letter-spacing:0}
+  .heart{font-size:12px}
+  .lives{gap:3px;margin-left:0}
+  .panel h1{font-size:30px}
+  .desc{font-size:14px}
+  .build{bottom:2px;font-size:10px}
+}
+
+/* E-10：320px 下隐藏键盘提示，避免「重开 R」被拆成两行 */
+@media (max-width:359px){
+  .hint{display:none}
 }

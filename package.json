@@ -1,0 +1,13 @@
+{
+  "name": "fish-eats-fish",
+  "version": "1.0.0",
+  "private": true,
+  "description": "大鱼吃小鱼 v1.0.0 · 实现 PRD v1.1",
+  "scripts": {
+    "test": "node --test tests/rules.test.mjs tests/runtime.sim.mjs",
+    "test:rules": "node --test tests/rules.test.mjs",
+    "test:runtime": "node --test tests/runtime.sim.mjs",
+    "probe": "node tests/probe.stress.mjs",
+    "release": "node scripts/release.mjs"
+  }
+}
